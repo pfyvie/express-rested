@@ -43,7 +43,7 @@ test('Extensions', function (t) {
 		});
 
 		t.test('PUT /rest/beer/Heineken.txt', function (t) {
-			collection.loadOne('Heineken', heineken);
+			collection.loadOne('heineken', heineken);
 
 			http.put(t, '/rest/beer/Heineken.txt', { hello: 'world' }, function (data, res) {
 				t.equal(res.statusCode, 200, 'HTTP status 200 (OK)');
@@ -78,8 +78,8 @@ test('Extensions', function (t) {
 
 		t.test('GET /rest/beer/Heineken (with getJson method)', function (t) {
 			const body = { hello: 'world' };
-			collection.loadOne('Heineken', heineken);
-			const obj = collection.get('Heineken');
+			collection.loadOne('heineken', heineken);
+			const obj = collection.get('heineken');
 
 			obj.getJson = function (req, res) {
 				res.writeHead(200, { 'content-type': 'application/json' });
@@ -131,14 +131,14 @@ test('Extensions', function (t) {
 
 	t.test('Collection extensions', function (t) {
 		t.test('GET /rest/beer.txt', function (t) {
-			collection.loadOne('Heineken', heineken);
-			collection.loadOne('Suntory Premium', suntory);
-			collection.loadOne('Rochefort', rochefort);
+			collection.loadOne('heineken', heineken);
+			collection.loadOne('suntory premium', suntory);
+			collection.loadOne('rochefort', rochefort);
 
 			const expectedData = [
-				JSON.stringify(collection.get('Heineken')),
-				JSON.stringify(collection.get('Rochefort')),
-				JSON.stringify(collection.get('Suntory Premium'))
+				JSON.stringify(collection.get('heineken')),
+				JSON.stringify(collection.get('rochefort')),
+				JSON.stringify(collection.get('suntory premium'))
 			].join('\n');
 
 			http.get(t, '/rest/beer.txt', function (data, res) {
@@ -178,7 +178,7 @@ test('Extensions', function (t) {
 	});
 
 	t.test('Error handling', function (t) {
-		collection.loadOne('Heineken', heineken);
+		collection.loadOne('heineken', heineken);
 
 		let errors = 0;
 

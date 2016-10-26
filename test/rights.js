@@ -35,7 +35,7 @@ test('No rights', function (t) {
 		rating: 1
 	};
 
-	const id = 'Heineken';
+	const id = 'heineken';
 
 	t.test('Injecting Heineken into collection through the backdoor', function (t) {
 		const resource = new Beer(id, heineken);

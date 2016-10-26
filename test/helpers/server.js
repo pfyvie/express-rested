@@ -9,7 +9,9 @@ const Beer = require('./Beer');
 module.exports = function (t, options, cb) {
 	const path = '/beer';
 	const app = express();
-	const router = new express.Router();
+	// Use both app and router in case-insensitive mode by default (coalesce to false)
+	app.set('case sensitive routing', options.caseSensitive || false);
+	const router = new express.Router({ caseSensitive: options.caseSensitive || false });
 	const rested = require('../..');
 
 	if (options.autoParse) {

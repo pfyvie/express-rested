@@ -20,8 +20,8 @@ test('HTTP cache', function (t) {
 			collection = _collection;
 			http = _http;
 
-			collection.loadOne('Heineken', heineken);
-			heineken.id = 'Heineken';
+			collection.loadOne('heineken', heineken);
+			heineken.id = 'heineken';
 
 			t.end();
 		});
@@ -48,7 +48,7 @@ test('HTTP cache', function (t) {
 
 			t.equal(res.statusCode, 200, 'HTTP status 200 (OK)');
 			t.equal(res.headers['content-type'], 'application/json', 'JSON response');
-			t.deepEqual(data, { Heineken: heineken }, 'Heineken returned');
+			t.deepEqual(data, { heineken }, 'Heineken returned');
 			t.end();
 		});
 	});

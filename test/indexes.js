@@ -31,10 +31,10 @@ test('Indexes', function (t) {
 	};
 
 	const all = {
-		Heineken: heineken,
-		SuntoryPremium: suntory,
-		Rochefort: rochefort,
-		DeMolen: demolen
+		heineken,
+		suntory,
+		rochefort,
+		demolen
 	};
 
 

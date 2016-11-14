@@ -18,9 +18,16 @@ module.exports = function (t, options, cb) {
 		app.use(bodyParser.json());
 	}
 
-	app.use('/rest', router);
+	// By defult, use a subrouter under /rest
+	// Option noSubRouter instead uses a base Express app under /
+	let route;
+	if (options.noSubRouter) {
+		route = rested.route(app);
+	} else {
+		app.use('/rest', router);
+		route = rested.route(router);
+	}
 
-	const route = rested.route(router);
 	const collection = rested.createCollection(Beer);
 
 	route(collection, path, options);

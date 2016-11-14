@@ -7,7 +7,7 @@ const rested = require('..');
 
 
 test('Methods', function (t) {
-	const options = { rights: true };
+	const options = { rights: true, caseSensitive: false };
 
 	let server, collection, http, Beer;
 
@@ -40,7 +40,7 @@ test('Methods', function (t) {
 	};
 
 	const demolen = {
-		id: 'demolen',
+		id: 'DeMolen',
 		name: 'De Molen - Hop en Liefde',
 		rating: 5
 	};
@@ -148,11 +148,11 @@ test('Methods', function (t) {
 	t.test('POST /rest/beer?foo=bar (Heineken)', function (t) {
 		http.post(t, '/rest/beer?foo=bar', heineken, function (data, res) {
 			t.equal(res.statusCode, 201, 'HTTP status 201 (Created)');
-			t.equal(res.headers.location, '/rest/beer/heineken', 'Location header is correct');
+			t.equal(res.headers.location, '/rest/beer/Heineken', 'Location header is correct');
 
-			heineken.id = 'heineken';
+			heineken.id = 'Heineken';
 
-			t.deepEqual(heineken, collection.get('heineken'), 'Heineken in collection');
+			t.deepEqual(heineken, collection.get('Heineken'), 'Heineken in collection');
 
 			// now retrieve it
 			http.get(t, res.headers.location, function (data, res) {
@@ -200,68 +200,7 @@ test('Methods', function (t) {
 			t.equal(res.statusCode, 200, 'HTTP status 200 (OK)');
 			t.equal(res.headers['content-type'], 'application/json', 'JSON response');
 			t.deepEqual(data, heineken, 'Heineken returned');
-			t.deepEqual(data, collection.get('heineken'), 'Heineken in collection');
-			t.end();
-		});
-	});
-
-	t.test('GET /rest/beer/HEINEKEN returns resource despite different capitalisation for resource name', function (t) {
-		http.get(t, '/rest/beer/HEINEKEN', function (data, res) {
-			t.equal(res.statusCode, 200, 'HTTP status 200 (OK)');
-			t.equal(res.headers['content-type'], 'application/json', 'JSON response');
-			t.deepEqual(data, heineken, 'Heineken returned');
-			t.deepEqual(data, collection.get('heineken'), 'Heineken in collection');
-			t.end();
-		});
-	});
-
-	t.test('GET /rest/BEER/Heineken returns resource despite different capitalisation for collection name', function (t) {
-		http.get(t, '/rest/BEER/Heineken', function (data, res) {
-			t.equal(res.statusCode, 200, 'HTTP status 200 (OK)');
-			t.equal(res.headers['content-type'], 'application/json', 'JSON response');
-			t.deepEqual(data, heineken, 'Heineken returned');
-			t.deepEqual(data, collection.get('heineken'), 'Heineken in collection');
-			t.end();
-		});
-	});
-
-	t.test('POST /rest/beer (heineken), different capitalisation for resource name', function (t) {
-		const lowerHeineken = {
-			name: 'heineken',
-			rating: 3
-		};
-
-		let errors = 0;
-
-		rested.on('error', function (error) {
-			t.ok(error, 'Error emitted');
-			errors += 1;
-		});
-
-		http.post(t, '/rest/beer', lowerHeineken, function (data, res) {
-			t.equal(res.statusCode, 500, 'HTTP status 500 (Internal Server Error)');
-			t.equal(errors, 1, 'One error emitted');
-
-			rested.removeAllListeners();
-
-			t.end();
-		});
-	});
-
-	t.test('POST /rest/BEER (Heineken), different capitalisation for collection name', function (t) {
-		let errors = 0;
-
-		rested.on('error', function (error) {
-			t.ok(error, 'Error emitted');
-			errors += 1;
-		});
-
-		http.post(t, '/rest/BEER', heineken, function (data, res) {
-			t.equal(res.statusCode, 500, 'HTTP status 500 (Internal Server Error)');
-			t.equal(errors, 1, 'One error emitted');
-
-			rested.removeAllListeners();
-
+			t.deepEqual(data, collection.get('Heineken'), 'Heineken in collection');
 			t.end();
 		});
 	});
@@ -277,24 +216,6 @@ test('Methods', function (t) {
 
 	t.test('HEAD /rest/beer/Heineken', function (t) {
 		http.head(t, '/rest/beer/Heineken', function (data, res) {
-			t.equal(res.statusCode, 200, 'HTTP status 200 (OK)');
-			t.equal(res.headers['content-type'], 'application/json', 'JSON response');
-			t.equal(data, '', 'No response body');
-			t.end();
-		});
-	});
-
-	t.test('HEAD /rest/beer/HEINEKEN, different capitalisation for resource name', function (t) {
-		http.head(t, '/rest/beer/HEINEKEN', function (data, res) {
-			t.equal(res.statusCode, 200, 'HTTP status 200 (OK)');
-			t.equal(res.headers['content-type'], 'application/json', 'JSON response');
-			t.equal(data, '', 'No response body');
-			t.end();
-		});
-	});
-
-	t.test('HEAD /rest/BEER/Heineken, different capitalisation for collection name', function (t) {
-		http.head(t, '/rest/BEER/Heineken', function (data, res) {
 			t.equal(res.statusCode, 200, 'HTTP status 200 (OK)');
 			t.equal(res.headers['content-type'], 'application/json', 'JSON response');
 			t.equal(data, '', 'No response body');
@@ -389,30 +310,6 @@ test('Methods', function (t) {
 		});
 	});
 
-	t.test('PUT /rest/beer/SUNTORYPREMIUM (update), different capitalisation for resource name', function (t) {
-		suntory.rating = 4.6;
-
-		http.put(t, '/rest/beer/SUNTORYPREMIUM', suntory, function (data, res) {
-			t.equal(res.statusCode, 204, 'HTTP status 204 (No Content)');
-			t.ok(res.headers.location, 'Location header returned');
-			t.equal(res.headers.location, '/rest/beer/' + suntory.id, 'Location header points to a beer');
-			t.deepEqual(suntory, collection.get(suntory.id), 'Suntory in collection');
-			t.end();
-		});
-	});
-
-	t.test('PUT /rest/BEER/SuntoryPremium (update), different capitalisation for collection name', function (t) {
-		suntory.rating = 4.7;
-
-		http.put(t, '/rest/BEER/SuntoryPremium', suntory, function (data, res) {
-			t.equal(res.statusCode, 204, 'HTTP status 204 (No Content)');
-			t.ok(res.headers.location, 'Location header returned');
-			t.equal(res.headers.location, '/rest/beer/' + suntory.id, 'Location header points to a beer');
-			t.deepEqual(suntory, collection.get(suntory.id), 'Suntory in collection');
-			t.end();
-		});
-	});
-
 	t.test('PATCH /rest/beer/Heineken (no data)', function (t) {
 		http.patch(t, '/rest/beer/Heineken', '', function (data, res) {
 			t.equal(res.statusCode, 400, 'HTTP status 400 (Bad Request)');
@@ -462,33 +359,7 @@ test('Methods', function (t) {
 		http.patch(t, '/rest/beer/Heineken', patch, function (data, res) {
 			t.equal(res.statusCode, 204, 'HTTP status 204 (No Content)');
 			heineken.rating = patch.rating;
-			t.deepEqual(collection.get('heineken'), heineken, 'Heineken with new ranking in collection');
-			t.end();
-		});
-	});
-
-	t.test('PATCH /rest/beer/HEINEKEN, different capitalisation for resource name', function (t) {
-		const patch = {
-			rating: 2.5
-		};
-
-		http.patch(t, '/rest/beer/HEINEKEN', patch, function (data, res) {
-			t.equal(res.statusCode, 204, 'HTTP status 204 (No Content)');
-			heineken.rating = patch.rating;
-			t.deepEqual(collection.get('heineken'), heineken, 'Heineken with new ranking in collection');
-			t.end();
-		});
-	});
-
-	t.test('PATCH /rest/BEER/Heineken, different capitalisation for collection name', function (t) {
-		const patch = {
-			rating: 2.6
-		};
-
-		http.patch(t, '/rest/beer/Heineken', patch, function (data, res) {
-			t.equal(res.statusCode, 204, 'HTTP status 204 (No Content)');
-			heineken.rating = patch.rating;
-			t.deepEqual(collection.get('heineken'), heineken, 'Heineken with new ranking in collection');
+			t.deepEqual(collection.get('Heineken'), heineken, 'Heineken with new ranking in collection');
 			t.end();
 		});
 	});
@@ -501,24 +372,8 @@ test('Methods', function (t) {
 		});
 	});
 
-	t.test('GET /rest/BEER returns beer collection despite different capitalisation for collection name', function (t) {
-		http.get(t, '/rest/BEER', function (data, res) {
-			t.equal(res.statusCode, 200, 'HTTP status 200 (OK)');
-			t.deepEqual(data, allButDeMolen, 'All beers but De Molen returned');
-			t.end();
-		});
-	});
-
 	t.test('GET /rest/beer/ (trailing slash)', function (t) {
 		http.get(t, '/rest/beer/', function (data, res) {
-			t.equal(res.statusCode, 200, 'HTTP status 200 (OK)');
-			t.deepEqual(data, allButDeMolen, 'All beers but De Molen returned');
-			t.end();
-		});
-	});
-
-	t.test('GET /rest/BEER/ (trailing slash), different capitalisation for collection name', function (t) {
-		http.get(t, '/rest/BEER/', function (data, res) {
 			t.equal(res.statusCode, 200, 'HTTP status 200 (OK)');
 			t.deepEqual(data, allButDeMolen, 'All beers but De Molen returned');
 			t.end();
@@ -562,7 +417,7 @@ test('Methods', function (t) {
 
 	t.test('GET /rest/beer.txt?name=en (search)', function (t) {
 		http.get(t, '/rest/beer.txt?name=en', function (data, res) {
-			heineken.id = 'heineken';
+			heineken.id = 'Heineken';
 			const expectedData = [demolen, heineken];
 
 			t.equal(res.statusCode, 200, 'HTTP status 200 (OK)');
@@ -646,7 +501,7 @@ test('Methods', function (t) {
 
 		http.delete(t, '/rest/beer/Heineken', function (data, res) {
 			t.equal(res.statusCode, 204, 'HTTP status 204 (No Content)');
-			t.deepEqual([demolen.id, rochefort.id], collection.getIds().sort(), 'Heineken is out');
+			t.deepEqual(collection.getList().sort(), [rochefort, demolen], 'Heineken is out');
 			t.equals(deletedName, 'Heineken', 'Heineken deleted() called');
 			t.end();
 		});
